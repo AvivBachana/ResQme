@@ -1,0 +1,25 @@
+__pycache__/
+*.py[cod]
+.venv/
+env/
+venv/
+.DS_Store
+
+# Secrets
+.env
+keys.json
+*.key
+*.pem
+*.p12
+credentials.json
+
+# Data and models (keep raw placeholder)
+src/resqme/data/raw/*
+!src/resqme/data/raw/.gitkeep
+src/resqme/data/processed/*
+src/resqme/data/augmented/*
+outputs/*
+
+
+# Jupyter artefacts
+.ipynb_checkpoints/
