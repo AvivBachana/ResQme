@@ -51,6 +51,13 @@ class ElevenLabsTTS:
     def list_voices(self, save_csv: Optional[str] = None) -> pd.DataFrame:
         url = f"{self.base_url}/voices"
         r = requests.get(url, headers=self._headers())
+        if r.status_code == 401:
+            tail = (self.api_key[-6:] if self.api_key else "None")
+            raise RuntimeError(
+                f"ElevenLabs returned 401 Unauthorized. API key missing/invalid. "
+                f"Key suffix seen: {tail}. "
+                f"Fix: rotate key, export ELEVENLABS_API_KEY, or use .env."
+            )
         r.raise_for_status()
         data = r.json().get("voices", [])
         df = pd.DataFrame(data)
