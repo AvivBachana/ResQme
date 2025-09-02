@@ -34,6 +34,31 @@ DEFAULT_SYMPTOM_NAME = "disease_symptom_matrix.csv"
 DEFAULT_SYMPTOM_CSV = RAW_DIR / DEFAULT_SYMPTOM_NAME
 DEFAULT_OUT_CSV = PROCESSED_DIR / "generated_gpt_calls.csv"
 
+PROMPT = (
+    "You are writing text that will be fed directly to ElevenLabs TTS (Eleven v3 Audio Tags).\n\n"
+    "TASK\n"
+    "Write a short emergency-call monologue in English by a distressed civilian.\n\n"
+    "CONTENT REQUIREMENTS\n"
+    "- Naturally include and describe these symptoms without naming any disease: {symptom_list}\n"
+    "- Only the caller’s words. No dispatcher. No headings, bullets, quotes, or explanations.\n\n"
+    "STYLE & DELIVERY\n"
+    "- Realistic, emotional speech under stress: hesitations, fillers (uh/um), repetitions, stutters (I— I…), ellipses (…) and em-dashes (—).\n"
+    "- Vary vocabulary and intensity across samples. Avoid templatey phrasing.\n\n"
+    "ELEVENLABS AUDIO TAGS (MANDATORY)\n"
+    "- Use inline audio tags in square brackets to direct delivery and non-speech sounds (2–5 total), e.g.:\n"
+    "  [sobbing], [crying], [gasping], [breathing heavily], [whispering], [shouting], [coughing], [wheezing], [sighs]\n"
+    "- Optionally ONE environmental tag if relevant: e.g., [sirens in distance], [traffic noise], [wind].\n"
+    "- Place tags inline with the words (no colons), e.g.: “I— I can’t— [gasping] he just fell…”\n"
+    "- Do not invent new formatting beyond bracketed tags.\n\n"
+    "LENGTH & FORM\n"
+    "- 90–160 words total (about 8–20 seconds).\n"
+    "- 1–2 short paragraphs; 1–3 sentences per paragraph.\n"
+    "- ASCII punctuation only. No metadata, no speaker labels.\n\n"
+    "OUTPUT\n"
+    "- Output ONLY the monologue text itself.\n"
+    "Now write the monologue."
+)
+
 
 @dataclass
 class GenerationSpec:
@@ -106,17 +131,7 @@ class MonologueGenerator:
     def _build_prompt(self, symptoms: List[str]) -> str:
         """Compose the user prompt for the chat model."""
         symptom_list = ", ".join(symptoms)
-        return (
-            "Write a short emergency call *monologue* in English, as if a distressed civilian is calling a medical emergency center.\n\n"
-            "The caller should describe an emergency situation involving the following symptoms:\n"
-            f"{symptom_list}\n\n"
-            "The monologue should be realistic and emotional, possibly showing confusion, panic, hesitation, informal language, or repetitions. "
-            "The speaker should NOT mention the name of any disease – only describe the symptoms directly or indirectly.\n\n"
-            "Focus on natural speech: disorganized phrasing, missing words, fear, or uncertainty are welcome. "
-            "This should feel like a real person under pressure calling for help.\n\n"
-            "Only include the caller’s words – do NOT include any dispatcher responses or questions.\n\n"
-            "This output will later be used for Text-to-Speech generation, so write only the caller’s spoken text."
-        )
+        return ( PROMPT )
 
     def _call_gpt(self, prompt: str) -> Optional[str]:
         """Call the chat model with retries and backoff."""
@@ -181,9 +196,8 @@ class MonologueGenerator:
                     "generated_call": result.strip(),
                 }
                 outputs.append(record)
+                print( record )
                 self._append_row_immediately(record)   # <-- immediate write
-                if self.spec.verbose:
-                    print(result.strip())
             time.sleep(self.spec.delay_seconds)
         return outputs
 
