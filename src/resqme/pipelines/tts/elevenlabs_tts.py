@@ -1,31 +1,29 @@
 # elevenlabs_tts.py
 """
 ElevenLabsTTS wrapper class.
-- Minimal dependency path: does not require pydub for basic TTS.
-- Optional SFX mixing via pydub when available.
+- Does not require pydub for basic TTS (optional mixing only).
+- Loads .env automatically if present.
+- Strips whitespace from API key to avoid 401 due to hidden characters.
 """
 
 from __future__ import annotations
-# --- load .env if present (makes local runs painless) ---
-
-try:
-    from dotenv import load_dotenv
-    load_dotenv()  # looks in CWD/parents (ResQme/.env when running CLI from project root)
-except Exception:
-    pass
-# --------------------------------------------------------
-from pathlib import Path
-
 import os
 import io
 import random
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional, List
+
+# Optional .env support
+try:
+    from dotenv import load_dotenv  # pip install python-dotenv
+    load_dotenv()
+except Exception:
+    pass
 
 import requests
 import pandas as pd
 
-# pydub is optional; only needed for mixing or format conversion
+# pydub is optional; only needed for mixing/overlay
 try:
     from pydub import AudioSegment  # type: ignore
     _HAS_PYDUB = True
@@ -36,7 +34,9 @@ except Exception:
 class ElevenLabsTTS:
     def __init__(self, api_key: Optional[str] = None, base_url: str = "https://api.elevenlabs.io/v1"):
         self.base_url = base_url.rstrip("/")
-        self.api_key = api_key or os.getenv("ELEVENLABS_API_KEY")
+        # Strip to remove accidental spaces/newlines
+        self.api_key = (api_key or os.getenv("ELEVENLABS_API_KEY") or "").strip()
+        # self.api_key= "sk_cf5e94e92a0dbaf78480c53f14f3a0c5cd0e2b911bcdfa13"
         if not self.api_key:
             raise RuntimeError("Missing ELEVENLABS_API_KEY")
 
@@ -54,9 +54,8 @@ class ElevenLabsTTS:
         if r.status_code == 401:
             tail = (self.api_key[-6:] if self.api_key else "None")
             raise RuntimeError(
-                f"ElevenLabs returned 401 Unauthorized. API key missing/invalid. "
-                f"Key suffix seen: {tail}. "
-                f"Fix: rotate key, export ELEVENLABS_API_KEY, or use .env."
+                f"ElevenLabs 401 Unauthorized. Check ELEVENLABS_API_KEY (suffix {tail}). "
+                f"Fix: rotate key, remove hidden whitespace, ensure env is loaded."
             )
         r.raise_for_status()
         data = r.json().get("voices", [])
@@ -68,21 +67,26 @@ class ElevenLabsTTS:
 
     # -------- Core TTS (no pydub required) --------
     def synthesize_text(
-        self,
-        text: str,
-        voice_id: str,
-        output_path: str,
-        model_id: str = "eleven_monolingual_v1",
-        stability: float = 0.3,
-        similarity_boost: float = 0.75,
-        style: float = 0.0,
-        speaker_boost: bool = True,
-        mp3_bitrate: str = "192k",
+            self,
+            text: str,
+            voice_id: str,
+            output_path: str,
+            model_id: str = "eleven_v3",  # default to v3 to support audio tags
+            stability: float = 0.3,
+            similarity_boost: float = 0.75,
+            style: float = 0.0,
+            speaker_boost: bool = True,
+            mp3_bitrate: str = "192k",
+            enable_ssml: bool = False,  # only for true SSML like <break/>, <prosody/>
     ) -> str:
-        """Generate TTS and save raw MP3 bytes to file, avoiding pydub."""
+        # Auto-upgrade to v3 if text contains bracket-tags and model isn't v3
+        if "[" in text and "]" in text and "v3" not in model_id:
+            print("ℹ Detected bracket-style audio tags; switching model to 'eleven_v3' for proper rendering.")
+            model_id = "eleven_v3"
+
         url = f"{self.base_url}/text-to-speech/{voice_id}"
         payload = {
-            "text": text,
+            "text": text if not enable_ssml else f"<speak>{text}</speak>",
             "model_id": model_id,
             "voice_settings": {
                 "stability": stability,
@@ -90,8 +94,16 @@ class ElevenLabsTTS:
                 "style": style,
                 "use_speaker_boost": speaker_boost,
             },
+            # SSML is optional and different from v3 audio tags. Turn on only if you use <break/>, <prosody>, etc.
+            "enable_ssml": bool(enable_ssml)
         }
         r = requests.post(url, headers=self._headers(accept="audio/mpeg"), json=payload, stream=True)
+
+        if r.status_code == 401:
+            tail = (self.api_key[-6:] if self.api_key else "None")
+            raise RuntimeError(
+                f"ElevenLabs 401 Unauthorized during synthesis. Key suffix {tail}."
+            )
         r.raise_for_status()
 
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
@@ -111,15 +123,13 @@ class ElevenLabsTTS:
         id_col: str = "id",
         random_voice: bool = False,
     ) -> pd.DataFrame:
-        """Batch synthesize. If random_voice=True, sample a voice per row."""
         df = pd.read_csv(csv_path)
+        pool: List[str] = []
         if random_voice:
             voices = self.list_voices()
-            pool = voices["voice_id"].dropna().tolist()
+            pool = voices["voice_id"].dropna().astype(str).tolist()
             if not pool:
                 raise RuntimeError("No voices available to sample from")
-        else:
-            pool = []
 
         outputs = []
         for _, row in df.iterrows():
@@ -132,10 +142,9 @@ class ElevenLabsTTS:
             self.synthesize_text(text=text, voice_id=voice_id, output_path=out_path)
             outputs.append({"id": row_id, "voice_id": voice_id, "path": out_path})
 
-        out_df = pd.DataFrame(outputs)
-        return out_df
+        return pd.DataFrame(outputs)
 
-    # -------- Optional: mix speech with SFX (requires pydub + audio backend) --------
+    # -------- Optional: mix speech with SFX (requires pydub) --------
     def mix_with_sfx(
         self,
         speech_mp3_path: str,
@@ -145,19 +154,12 @@ class ElevenLabsTTS:
     ) -> str:
         if not _HAS_PYDUB:
             raise RuntimeError("pydub not available. Install pydub and ensure ffmpeg is installed.")
-
-        speech_bytes = Path(speech_mp3_path).read_bytes()
-        sfx_bytes = Path(sfx_wav_path).read_bytes()
-
-        speech = AudioSegment.from_file(io.BytesIO(speech_bytes), format="mp3")
-        sfx = AudioSegment.from_file(io.BytesIO(sfx_bytes), format="wav")
-        sfx = sfx + sfx_gain_db
-
+        speech = AudioSegment.from_file(speech_mp3_path, format="mp3")
+        sfx = AudioSegment.from_file(sfx_wav_path, format="wav") + sfx_gain_db
         if len(sfx) < len(speech):
             loops = (len(speech) // len(sfx)) + 1
             sfx = sfx * loops
         sfx = sfx[: len(speech)]
-
         mixed = speech.overlay(sfx)
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
         mixed.export(output_path, format="mp3", bitrate="192k")

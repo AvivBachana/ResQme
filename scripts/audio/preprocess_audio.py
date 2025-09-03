@@ -1,5 +1,5 @@
 import os, glob
-from src.resqme.pipelines.audio.audio_preprocess import to_wav
+from ResQme.src.resqme.pipelines.audio.audio_preprocess import to_wav
 
 IN_DIR = "outputs/audio"                      # input: TTS outputs
 OUT_DIR = "src/resqme/data/processed/audio"  # output: model-ready WAVs

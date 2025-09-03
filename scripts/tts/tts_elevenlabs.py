@@ -1,3 +1,5 @@
+# tts_elevenlabs.py
+
 #!/usr/bin/env python3
 """
 CLI for ElevenLabs TTS with sensible defaults.
@@ -20,33 +22,36 @@ ResQme/
                 └── elevenlabs_tts.py  <-- the class implementation
 """
 
+# --- import & path bootstrap (correct) ---
 from __future__ import annotations
-import argparse
-import sys
+import argparse, sys, traceback, os
 from pathlib import Path
-from typing import Optional
 
-# --- Add project /src to sys.path so package imports succeed when running directly ---
+
 THIS_FILE = Path(__file__).resolve()
-RESQME_ROOT = THIS_FILE.parents[2]  # .../ResQme
+RESQME_ROOT = THIS_FILE.parents[2]          # .../ResQme
 SRC_DIR = RESQME_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
-# ------------------------------------------------------------------------------------
 
-# Prefer package import (project structure), but allow local fallback if user colocates files
 try:
-    from ResQme.src.resqme.pipelines.tts.elevenlabs_tts import ElevenLabsTTS
+    # Correct, lower-case package path
+    from resqme.pipelines.tts.elevenlabs_tts import ElevenLabsTTS
 except Exception:
+    print("↯ Import error while importing 'resqme.pipelines.tts.elevenlabs_tts':")
+    traceback.print_exc()
+    print("\nTrying local fallback 'elevenlabs_tts' next to this script...")
     try:
-        # Fallback: in case elevenlabs_tts.py sits next to this script
         from elevenlabs_tts import ElevenLabsTTS  # type: ignore
-    except Exception as e:
+    except Exception:
+        print("↯ Fallback import also failed:")
+        traceback.print_exc()
         raise SystemExit(
             "Failed to import elevenlabs_tts. Ensure either:\n"
-            "1) Project layout has ResQme/src on sys.path and file at src/resqme/pipelines/tts/elevenlabs_tts.py\n"
+            "1) ResQme/src is on sys.path and src/resqme/pipelines/tts/elevenlabs_tts.py exists\n"
             "2) Or place elevenlabs_tts.py next to this CLI script."
-        ) from e
+        )
+# -----------------------------------------
 
 VOICES_DIR = RESQME_ROOT / "voices"  # local directory where custom voices might live (optional)
 
