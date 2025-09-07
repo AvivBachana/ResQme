@@ -62,7 +62,7 @@ The goal is to deliver a working prototype that demonstrates real-time emergency
 
 ### System Architecture
 
-![System Diagram](docs/system_diagram.png)
+![System Diagram](diagrams/High-Level Architecture.png)
 
 ### User Interface Mockup
 
