@@ -79,10 +79,3 @@ The goal is to deliver a working prototype that demonstrates real-time emergency
 I am a 3rd-year Industrial Engineering & Management student, majoring in Business Intelligence & Information Systems.
 I enjoy programming, learning new technologies, and developing data-driven solutions.
 [LinkedIn](https://www.linkedin.com/in/aviv-bachana) | [GitHub](https://github.com/AvivBachana)
-
-```
-
----
-
-רוצה שאכין לך גם **גרסאות בסיסיות של התרשימים עצמם** (system diagram / data flow) בקבצי PNG או ב־Mermaid code כדי שתוכלי ישר לשים ב־docs?
-```
