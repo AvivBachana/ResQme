@@ -1,0 +1,55 @@
+classDiagram
+class "src.resqme.config.Paths" {
+}
+class "src.resqme.pipelines.llm.tinyllama_adapter.TinyLlamaScript" {
+  +extra_globals
+  +__init__()
+  +run()
+}
+class "src.resqme.pipelines.llm.generate_monologues.GenerationSpec" {
+}
+class "src.resqme.pipelines.llm.generate_monologues.MonologueGenerator" {
+  +client
+  +header
+  +out_path
+  +spec
+  +symptom_df
+  +__init__()
+  +_append_row_immediately()
+  +_build_prompt()
+  +_call_gpt()
+  +_present_symptoms_for()
+  +_sample_symptoms()
+  +diseases()
+  +from_csv()
+  +generate_for_disease()
+  +init_client()
+  +run_all()
+}
+class "src.resqme.pipelines.llm.data_adapter.DataScript" {
+  +extra_globals
+  +__init__()
+  +run()
+}
+class "src.resqme.pipelines.llm.openai_adapter.OpenAIScript" {
+  +extra_globals
+  +__init__()
+  +run()
+}
+class "src.resqme.pipelines.tts.tts_adapter.TTSScript" {
+  +extra_globals
+  +__init__()
+  +run()
+}
+class "src.resqme.pipelines.tts.elevenlabs_tts.ElevenLabsTTS" {
+  +api_key
+  +base_url
+  +__init__()
+  +_headers()
+  +add_samples()
+  +add_voice()
+  +list_voices()
+  +synthesize_from_csv()
+  +synthesize_text()
+  +synthesize_with_sfx()
+}
