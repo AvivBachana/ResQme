@@ -72,7 +72,6 @@ The goal is to deliver a working prototype that demonstrates real-time emergency
 
 ![Data Flow](docs/data_flow.png)
 
-*(images above are placeholders – to display them, upload PNG/JPG files into the `docs/` folder with the same filenames)*
 
 ## 👩‍💻 About Me
 
