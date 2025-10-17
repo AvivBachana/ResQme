@@ -38,8 +38,8 @@ ResQme/
 ## 🚀 How to Run (basic demo)  
 1. Clone the repo:  
    ```bash
-   git clone https://github.com/AvivBachana/ResQme
-   cd ResQme
+   git clone https://github.com/AvivBachana/Code
+   cd Code
 ````
 
 2. Install dependencies:
@@ -47,7 +47,7 @@ ResQme/
    ```bash
    pip install -r requirements.txt
    ```
-3. Run a demo script (example – TTS):
+3.  a demo script (example – TTS):
 
    ```bash
    python src/tts/tts_elevenlabs.py
