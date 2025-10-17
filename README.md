@@ -78,4 +78,4 @@ The goal is to deliver a working prototype that demonstrates real-time emergency
 
 I am a 3rd-year Industrial Engineering & Management student, majoring in Business Intelligence & Information Systems.
 I enjoy programming, learning new technologies, and developing data-driven solutions.
-[LinkedIn]([https://www.linkedin.com/in/aviv-bachana](https://www.linkedin.com/in/aviv-bachana/)) | [GitHub](https://github.com/AvivBachana)
+[LinkedIn](https://www.linkedin.com/in/aviv-bachana/) | [GitHub](https://github.com/AvivBachana)
