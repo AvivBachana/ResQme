@@ -68,7 +68,7 @@ class GenerationSpec:
     symptoms_per_call: int = 3
     max_diseases: Optional[int] = None
     seed: Optional[int] = 42
-    model: str = "gpt-4"
+    model: str = "gpt-3.5-turbo"
     temperature: float = 1.0
     max_tokens: int = 500
     delay_seconds: float = 2.0
@@ -230,7 +230,7 @@ def parse_args() -> GenerationSpec:
     p.add_argument("--max-diseases", type=int, default=None)
     p.add_argument("--seed", type=int, default=42,
                    help="Random seed for reproducibility. Use -1 to disable.")
-    p.add_argument("--model", default="gpt-4")
+    p.add_argument("--model", default="gpt-3.5-turbo")
     p.add_argument("--temperature", type=float, default=1.0)
     p.add_argument("--max-tokens", type=int, default=500)
     p.add_argument("--delay-seconds", type=float, default=2.0)
