@@ -3,23 +3,37 @@ from elevenlabs.play import play
 import requests
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dotenv import load_dotenv
+
 
 import csv
 
+
+load_dotenv()
+
 # Read from the input CSV
-input_file = 'calls.csv'
+input_file = 'src/resqme/data/text/generated_gpt_calls.csv'
 output_file = 'output.csv'
+
 
 elevenlabs = ElevenLabs(
   api_key="sk_8584e8ea1b5ce37d0cfedd6b4509e02121d9f3508fe1f88d",
 )
 
-def process_row(enum, row):
+# def initialize_elevenlabs():
+#     global elevenlabs
+#     elevenlabs = ElevenLabs(
+#       api_key=os.getenv("ELEVENLABS_API_KEY"),
+#     )
+
+VOICES_LIST = ["OLMZ4YtF8AcDL7aQQMcp"]
+
+def process_row(enum, row, voice_id):
     """Process a single row and generate audio"""
     try:
         audio = elevenlabs.text_to_speech.convert(
             text=row[2],
-            voice_id="OLMZ4YtF8AcDL7aQQMcp",
+            voice_id = voice_id,
             model_id="eleven_v3",
             output_format="mp3_44100_128",
         )
