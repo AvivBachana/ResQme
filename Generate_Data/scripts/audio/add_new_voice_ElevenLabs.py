@@ -1,7 +1,8 @@
 # --- Create a new IVC voice with SDK ---
 from elevenlabs import ElevenLabs
+import os
 
-client = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
+client = ElevenLabs(api_key= os.getenv("ELEVENLABS_API_KEY"))
 
 # Create a voice “shell”
 resp = client.voices.ivc.create(name="Yossi_Demo")  # returns voice_id

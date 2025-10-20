@@ -14,11 +14,11 @@ keys.json
 credentials.json
 
 # Data and models (keep raw placeholder)
-src/resqme/data/raw/*
-!src/resqme/data/raw/.gitkeep
-src/resqme/data/processed/*
-src/resqme/data/augmented/*
-outputs/*
+Generate_Data/src/resqme/data/raw/*
+!Generate_Data/src/resqme/data/raw/.gitkeep
+Generate_Data/src/resqme/data/processed/*
+Generate_Data/src/resqme/data/augmented/*
+Generate_Data/outputs/*
 
 
 # Jupyter artefacts

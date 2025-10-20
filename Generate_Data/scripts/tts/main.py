@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import csv
 
 # Read from the input CSV
-input_file = 'calls.csv'
+input_file = '/Generate_Data/src/resqme/data/text/generated_gpt_calls.csv'
 output_file = 'output.csv'
 
 elevenlabs = ElevenLabs(
@@ -34,7 +34,7 @@ def process_row(enum, row):
 
 # Read and write the CSV data
 with open(input_file, 'r', encoding='utf-8') as infile:
-    reader = csv.reader(infile, delimiter='\t')
+    reader = csv.reader(infile)  # default delimiter is comma
     rows = list(reader)
     
     with open(output_file, 'w', encoding='utf-8', newline='') as outfile:

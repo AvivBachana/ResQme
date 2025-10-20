@@ -1,5 +1,5 @@
 import os, glob
-from src.resqme.pipelines.audio.audio_utils import add_white_noise
+from Generate_Data.src.resqme.pipelines.audio.audio_utils import add_white_noise
 
 IN_DIR = "outputs/audio"
 OUT_DIR = "outputs/audio_noisy"
