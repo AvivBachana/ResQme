@@ -41,7 +41,7 @@ ResQme
 │       │   │   ├── openai_adapter.py
 │       │   │   └── tinyllama_adapter.py
 │       │   └── tts
-│       │       ├── elevenlabs_tts.py
+│       │       ├── ElevenLabsTTS.py
 │       │       └── tts_adapter.py
 │       ├── __init__.py
 │       └── config.py
@@ -133,7 +133,7 @@ _No module docstring found._
 
 **File:** `scripts/tts/tts_elevenlabs.py`
 
-**Imports:** ResQme.src.resqme.pipelines.tts.elevenlabs_tts, argparse, pathlib
+**Imports:** ResQme.src.resqme.pipelines.tts.ElevenLabsTTS, argparse, pathlib
 
 **Module docstring / summary:**
 
@@ -281,9 +281,9 @@ The original code is embedded as a raw string and executed in an isolated namesp
   - Attributes: extra_globals
   - Methods: __init__, run
 
-### src.resqme.pipelines.tts.elevenlabs_tts
+### src.resqme.pipelines.tts.ElevenLabsTTS
 
-**File:** `src/resqme/pipelines/tts/elevenlabs_tts.py`
+**File:** `src/resqme/pipelines/tts/ElevenLabsTTS.py`
 
 **Imports:** os, pandas, pathlib, pydub, random, requests, typing
 
@@ -378,7 +378,7 @@ class "src.resqme.pipelines.tts.tts_adapter.TTSScript" {
   +__init__()
   +run()
 }
-class "src.resqme.pipelines.tts.elevenlabs_tts.ElevenLabsTTS" {
+class "src.resqme.pipelines.tts.ElevenLabsTTS.ElevenLabsTTS" {
   +api_key
   +base_url
   +__init__()
@@ -404,7 +404,7 @@ flowchart LR
 "scripts.audio.add_new_voice_ElevenLabs"
 "scripts.audio.add_noise"
 "scripts.tts.tts_elevenlabs"
-"scripts.tts.tts_elevenlabs" --> "ResQme.src.resqme.pipelines.tts.elevenlabs_tts"
+"scripts.tts.tts_elevenlabs" --> "ResQme.src.resqme.pipelines.tts.ElevenLabsTTS"
 "scripts.tts.tts_google"
 "scripts.train.train_baseline"
 "scripts.eval.evaluate_baseline"
@@ -417,5 +417,5 @@ flowchart LR
 "src.resqme.pipelines.audio.audio_utils"
 "src.resqme.pipelines.audio.audio_preprocess"
 "src.resqme.pipelines.tts.tts_adapter"
-"src.resqme.pipelines.tts.elevenlabs_tts"
+"src.resqme.pipelines.tts.ElevenLabsTTS"
 ```

@@ -5,7 +5,7 @@
 CLI for ElevenLabs TTS with sensible defaults.
 
 Key improvements:
-- Default model: eleven_multilingual_v3 (real v3).
+- Default model: eleven_v3 (real v3).
 - Absolute output paths and clear prints for every saved file.
 - CSV text column inference (text/monologue/prompt/content).
 - Optional mixing with noise via ffmpeg (no pydub/audioop).
@@ -27,20 +27,20 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 try:
-    from resqme.pipelines.tts.elevenlabs_tts import ElevenLabsTTS
+    from resqme.pipelines.tts.ElevenLabsTTS import ElevenLabsTTS
 except Exception:
-    print("↯ Import error while importing 'resqme.pipelines.tts.elevenlabs_tts':")
+    print("↯ Import error while importing 'resqme.pipelines.tts.ElevenLabsTTS':")
     traceback.print_exc()
-    print("\nTrying local fallback 'elevenlabs_tts' next to this script...")
+    print("\nTrying local fallback 'ElevenLabsTTS' next to this script...")
     try:
-        from elevenlabs_tts import ElevenLabsTTS  # type: ignore
+        from ElevenLabsTTS import ElevenLabsTTS  # type: ignore
     except Exception:
         print("↯ Fallback import also failed:")
         traceback.print_exc()
         raise SystemExit(
-            "Failed to import elevenlabs_tts. Ensure either:\n"
-            "1) ResQme/src is on sys.path and src/resqme/pipelines/tts/elevenlabs_tts.py exists\n"
-            "2) Or place elevenlabs_tts.py next to this CLI script."
+            "Failed to import ElevenLabsTTS. Ensure either:\n"
+            "1) ResQme/src is on sys.path and src/resqme/pipelines/tts/ElevenLabsTTS.py exists\n"
+            "2) Or place ElevenLabsTTS.py next to this CLI script."
         )
 
 VOICES_DIR = RESQME_ROOT / "voices"  # optional local workspace for custom voices
@@ -61,7 +61,7 @@ def parse_args() -> argparse.Namespace:
     p_single.add_argument("--text", required=True, help="Text to synthesize")
     p_single.add_argument("--out", required=True, help="Output MP3 path")
     p_single.add_argument("--voice-id", help="ElevenLabs voice_id")
-    p_single.add_argument("--model-id", default="eleven_multilingual_v3", help="Model id (default: eleven_multilingual_v3)")
+    p_single.add_argument("--model-id", default="eleven_v3", help="Model id (default: eleven_v3)")
     p_single.add_argument("--stability", type=float, default=0.30)
     p_single.add_argument("--similarity", type=float, default=0.75)
     p_single.add_argument("--style", type=float, default=0.0)
@@ -76,7 +76,7 @@ def parse_args() -> argparse.Namespace:
     p_csv.add_argument("--random-voice", action="store_true", help="Sample a random available voice per row")
     p_csv.add_argument("--text-col", default=None, help="Explicit text column if not one of [text, monologue, prompt, content]")
     p_csv.add_argument("--id-col", default="id", help="Row identifier column (default: id)")
-    p_csv.add_argument("--model-id", default="eleven_multilingual_v3")
+    p_csv.add_argument("--model-id", default="eleven_v3")
     p_csv.add_argument("--stability", type=float, default=0.30)
     p_csv.add_argument("--similarity", type=float, default=0.75)
     p_csv.add_argument("--style", type=float, default=0.0)

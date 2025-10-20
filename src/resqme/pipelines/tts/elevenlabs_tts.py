@@ -1,4 +1,4 @@
-# elevenlabs_tts.py
+# ElevenLabsTTS.py
 """
 ElevenLabsTTS wrapper class.
 - No pydub required for core TTS (optional mixing only via pydub if available).
@@ -69,7 +69,7 @@ class ElevenLabsTTS:
         text: str,
         voice_id: str,
         output_path: str,
-        model_id: str = "eleven_multilingual_v3",
+        model_id: str = "eleven_v3",
         stability: float = 0.30,
         similarity_boost: float = 0.75,
         style: float = 0.0,
@@ -83,8 +83,8 @@ class ElevenLabsTTS:
         """
         # If the text has v3-style bracket tags and model isn't v3, upgrade model
         if "[" in text and "]" in text and "v3" not in model_id:
-            print("ℹ Detected bracket-style tags; switching model to 'eleven_multilingual_v3'.")
-            model_id = "eleven_multilingual_v3"
+            print("ℹ Detected bracket-style tags; switching model to 'eleven_v3'.")
+            model_id = "eleven_v3"
 
         url = f"{self.base_url}/text-to-speech/{voice_id}"
         payload = {
@@ -128,7 +128,7 @@ class ElevenLabsTTS:
         text_col: Optional[str] = None,
         id_col: str = "id",
         random_voice: bool = False,
-        model_id: str = "eleven_multilingual_v3",
+        model_id: str = "eleven_v3",
         output_format: str = "mp3_44100_128",
         stability: float = 0.30,
         similarity_boost: float = 0.75,

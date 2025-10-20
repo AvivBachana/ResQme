@@ -1,5 +1,5 @@
 from pathlib import Path
-from resqme.pipelines.tts.elevenlabs_tts import ElevenLabsTTS
+from resqme.pipelines.tts.ElevenLabsTTS import ElevenLabsTTS
 
 # Resolve project roots safely based on this file location
 THIS_FILE = Path(__file__).resolve()
@@ -28,7 +28,7 @@ def main():
         text_col=None,             # auto-detects [text, monologue, prompt, content]
         id_col="id",
         random_voice=True,         # <- random voice per row
-        model_id="eleven_multilingual_v3",
+        model_id="eleven_v3",
         output_format="mp3_44100_128",
         stability=0.3,
         similarity_boost=0.75,

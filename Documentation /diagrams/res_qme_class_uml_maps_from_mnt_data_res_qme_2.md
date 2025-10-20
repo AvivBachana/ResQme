@@ -51,7 +51,7 @@
   *Fields:* `extra_globals`  
   *Key methods:* `run()` (executes embedded data‑prep script; adapter facade).
 
-### `src/resqme/pipelines/tts/elevenlabs_tts.py`
+### `src/resqme/pipelines/tts/ElevenLabsTTS.py`
 - **class `ElevenLabsTTS`**  
   *Fields:* `api_key`, `base_url`, `voices`, `uid`, `text`, `speech`, `speech_bytes`, `sfx`, `sfx_bytes`, `url` (plus helper state), `voices` cache/CSV handling  
   *Key methods:* `_headers()`, `list_voices()`, `add_voice()`, `add_samples()`, `synthesize_text()`, `synthesize_from_csv()`, `synthesize_with_sfx()`  
